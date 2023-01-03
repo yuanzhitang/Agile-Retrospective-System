@@ -1,0 +1,138 @@
+﻿.layout {
+  /* border: 1px solid #d7dde4; */
+  background: #f5f7f9;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index:0;
+  overflow-y:hidden
+}
+
+.layout .ivu-card-body {
+  padding: 0px;
+}
+
+.layout-logo {
+  color: #ffffff;
+  /* float: left; */
+  position: absolute;
+  top: -1px;
+  left: -35px;
+  font-size: 15pt;
+}
+
+.layout-header-bar {
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.layout-loginUser {
+  /*border-radius: 3px;*/
+  color: #ccc;
+  float: right;
+  position: relative;
+  /* top: 10px;
+    right: 10px;*/
+  /*    width: 100px;
+    height: 30px;
+    background: #5b6270;
+    border-radius: 3px;
+    float: right;
+    position: relative;
+    top: 15px;
+    right: 10px;*/
+}
+
+.layout-nav {
+  position: absolute;
+  top: -10px;
+  right: -45px;
+
+  width: 500px;
+  /* margin: 0 auto; */
+  /* margin-right: 0px; */
+  color: #deebff;
+}
+
+.layout-footer-center {
+  text-align: center;
+  height: 10px;
+  margin-top: -15px;
+}
+
+.layout-con {
+  height: 100%;
+  width: 100%;
+}
+
+.main-board{
+  width: 100%;flex:1;
+}
+
+.page-footer {
+  height: 50px;
+  text-align: center;
+}
+
+.subLayout { 
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.subLayout .ivu-card-body {
+  padding: 16px;
+}
+
+.menu-item span {
+  display: inline-block;
+  overflow: hidden;
+  width: 100px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  transition: width 0.2s ease 0.2s;
+}
+
+.menu-item i {
+  transform: translateX(0px);
+  transition: font-size 0.2s ease, transform 0.2s ease;
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+.collapsed-menu span {
+  width: 0px;
+  transition: width 0.2s ease;
+}
+
+.collapsed-menu i {
+  transform: translateX(5px);
+  transition: font-size 0.2s ease 0.2s, transform 0.2s ease 0.2s;
+  vertical-align: middle;
+  font-size: 22px;
+}
+
+.rotate-icon {
+  transform: rotate(-90deg);
+}
+
+.my-drawer-profile {
+  font-size: 14px;
+}
+
+.my-drawer-profile .ivu-col {
+  margin-bottom: 12px;
+}
+
+.my-drawer-footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid #e8e8e8;
+  padding: 10px 16px;
+  text-align: right;
+  background: #fff;
+}

@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  consul:
+     image: consul #指定镜像名称为consul，本地如果没有consul镜像，会从docker远程仓库拉取
+     ports: 
+           - '8500:8500'
+     networks: 
+           - my-net
+networks: #定义容器网络
+  my-net: #my-net网络
+    driver: bridge #网络模式为bridge

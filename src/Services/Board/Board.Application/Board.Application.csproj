@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>Cube.Board.Application</AssemblyName>
+    <RootNamespace>Cube.Board.Application</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\RedisUtil\RedisRepository.csproj" />
+    <ProjectReference Include="..\Board.Domain\Board.Domain.csproj" />
+    <ProjectReference Include="..\Board.Infrastructure\Board.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

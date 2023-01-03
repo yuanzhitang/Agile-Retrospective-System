@@ -1,0 +1,92 @@
+﻿{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/{url}",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/{url}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "ServiceName": "BoardService",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin" //LoadBanlancer LeastConnection/RoundRobin/NoLoadBalancer/CookieStickySessions
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 5,
+        "Region": "regionname"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [ "SuperClient" ],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 2,
+        "Limit": 10000
+      }
+
+    },
+    {
+      "DownstreamPathTemplate": "/user/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/user/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "ServiceName": "UserService",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 5,
+        "Region": "regionname"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [ "SuperClient" ],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 2,
+        "Limit": 10000
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/authorize",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/authorize",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "ServiceName": "IdentityService",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 5,
+        "Region": "regionname"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [ "SuperClient" ],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 2,
+        "Limit": 10000
+      }
+    }
+
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://gateway:9070",
+    "ServiceDiscoveryProvider": {
+      "Scheme": "http",
+      "Host": "consul",
+      "Port": 8500,
+      "Type": "Consul"
+    },
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "too many requests...",
+      "HttpStatusCode": 999,
+      "ClientIdHeader": "Test"
+    },
+    "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3,
+        "DurationOfBreak": 10000,
+        "TimeoutValue": 5000
+    }
+  }
+}

@@ -1,0 +1,243 @@
+version: '3.4'
+
+# Steps:
+
+# Go the root directory of Cube
+# 1. 
+# Generate Certificate from .NET CLI or CMD
+# dotnet dev-certs https -ep %USERPROFILE%\.aspnet\https\aspnetapp.pfx -p Welcome1
+# dotnet dev-certs https --trust
+
+# 2. 
+# docker-compose build
+# docker-compose up
+
+services:
+  
+  #redis:
+  #   image: redis:alpine
+  #   ports:
+  #     - '6379:6379'
+     
+  #   command:
+  #     redis-server --requirepass password
+  #   volumes:
+  #     - $PWD/src/Infrastructure/RedisUtil/redis-data:/var/lib/redis
+  #     - $PWD/src/Infrastructure/RedisUtil/redis.conf:/usr/local/etc/redis/redis.conf
+  #   networks:
+  #     - my-net
+
+  # Board Microservice #
+  boardservice1: #定义"boardservice1"服务 对应的Board服务项目
+     image: cubeboardservice #指定镜像名称
+     build: 
+       context: .
+       dockerfile: ./src/Services/Board/Board.API/Dockerfile
+     ports: 
+        - '5000:5000'
+        - '5050:5050'
+     environment: 
+            - ASPNETCORE_URLS=https://+:5000;http://+:5050
+            - Consul:Ip=boardservice1
+            - Consul:Port=5000
+            - Consul:IsHttps=true
+            - ConnectionStrings__DefaultConnection=Server=tcp:10.63.223.58,1433;Initial Catalog=cube_board;User ID=sa;Password=Welcome1*;
+            - ConnectionStrings__RedisConnection=10.63.223.58:6379
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+            - RabbitMq__ConnectionString=amqp://admin:Welcome1@10.63.223.58:5672
+            - RabbitMq__QueueName=CubeEvent
+     volumes:
+            - ~/.aspnet/https:/https:ro
+     networks: 
+            - my-net
+     depends_on: 
+            - consul
+
+  boardservice2:
+     image: cubeboardservice
+     ports: 
+        - '5001:5001'
+     environment: 
+            - ASPNETCORE_URLS=https://+:5001
+            - Consul:Ip=boardservice2
+            - Consul:Port=5001
+            - Consul:IsHttps=true
+            - ConnectionStrings__DefaultConnection=Server=tcp:10.63.223.58,1433;Initial Catalog=cube_board;User ID=sa;Password=Welcome1*;
+            - ConnectionStrings__RedisConnection=10.63.223.58:6379
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+     volumes:
+            - ~/.aspnet/https:/https:ro
+     networks: 
+            - my-net
+     depends_on: 
+            - boardservice1
+
+  boardservice3:
+     image: cubeboardservice
+     ports: 
+        - '5002:5002'
+     environment: 
+            - ASPNETCORE_URLS=https://+:5002
+            - Consul:Ip=boardservice3
+            - Consul:Port=5002
+            - Consul:IsHttps=true
+            - ConnectionStrings__DefaultConnection=Server=tcp:10.63.223.58,1433;Initial Catalog=cube_board;User ID=sa;Password=Welcome1*;
+            - ConnectionStrings__RedisConnection=10.63.223.58:6379
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+     volumes:
+            - ~/.aspnet/https:/https:ro
+     networks: 
+            - my-net
+     depends_on: 
+            - boardservice1
+
+  # User Microservice #
+  userservice1:
+     image: cubeuserservice
+     build: 
+       context: .
+       dockerfile: ./src/Services/User/User.API/Dockerfile
+     ports: 
+        - '4000:4000'
+     environment: 
+            - ASPNETCORE_URLS=https://+:4000
+            - Consul:Ip=userservice1
+            - Consul:Port=4000
+            - Consul:IsHttps=true
+            - ConnectionStrings__DefaultConnection=Server=tcp:10.63.223.58,1433;Initial Catalog=cube_user;User ID=sa;Password=Welcome1*;
+            - ConnectionStrings__RedisConnection=10.63.223.58:6379
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+     volumes:
+            - ~/.aspnet/https:/https:ro
+     networks: 
+            - my-net
+     depends_on: 
+            - consul
+
+  userservice2:
+     image: cubeuserservice
+     build: 
+       context: .
+       dockerfile: ./src/Services/User/User.API/Dockerfile
+     ports: 
+        - '4001:4001'
+     environment: 
+            - ASPNETCORE_URLS=https://+:4001
+            - Consul:Ip=userservice2
+            - Consul:Port=4001
+            - Consul:IsHttps=true
+            - ConnectionStrings__DefaultConnection=Server=tcp:10.63.223.58,1433;Initial Catalog=cube_user;User ID=sa;Password=Welcome1*;
+            - ConnectionStrings__RedisConnection=10.63.223.58:6379
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+     volumes:
+            - ~/.aspnet/https:/https:ro
+     networks: 
+            - my-net
+     depends_on: 
+            - consul
+
+  # Identity Microservice #
+  identityservice1:
+     image: cubeidentityservice
+     build: 
+       context: .
+       dockerfile: ./src/Services/Identity/Identity.API/Dockerfile
+     ports: 
+        - '3000:3000'
+     environment: 
+            - ASPNETCORE_URLS=https://+:3000
+            - Consul:Ip=identityservice1
+            - Consul:Port=3000
+            - Consul:IsHttps=true
+            - UserService:Scheme=https
+            - UserService:Host=userservice1
+            - UserService:Port=4000
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+     volumes:
+            - ~/.aspnet/https:/https:ro
+     networks:
+            - my-net
+     depends_on: 
+            - consul
+            - userservice1
+            - userservice2
+
+  identityservice2:
+     image: cubeidentityservice
+     build: 
+       context: .
+       dockerfile: ./src/Services/Identity/Identity.API/Dockerfile
+     ports: 
+        - '3001:3001'
+     environment: 
+            - ASPNETCORE_URLS=https://+:3001
+            - Consul:Ip=identityservice2
+            - Consul:Port=3001
+            - Consul:IsHttps=true
+            - UserService:Scheme=https
+            - UserService:Host=userservice2
+            - UserService:Port=4001
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+     volumes:
+            - ~/.aspnet/https:/https:ro
+     networks:
+            - my-net
+     depends_on: 
+            - consul
+            - userservice1
+            - userservice2
+
+  # CubeWeb #
+  #cubewebapp:
+  #   image: cubeweb
+  #   build: 
+  #     context: .
+  #     dockerfile: ./src/Web/cube/Dockerfile
+  #   ports: 
+  #      - '8080:80'
+  #   environment: 
+  #          - ASPNETCORE_Kestrel__Certificates__Default__Password=Welcome1
+  #          - ASPNETCORE_Kestrel__Certificates__Default__Path=./aspnetapp.pfx
+  #   volumes:
+  #          - ~/.aspnet/https:/https:ro
+  #   networks:
+  #          - my-net
+
+  # Gateway Service #
+  gateway:
+    image: cubegatewayservice
+    build:
+      context: .
+      dockerfile: ./src/ApiGateway/Dockerfile
+    ports:
+         - '9070:9070' 
+    environment: 
+         - ASPNETCORE_URLS=http://+:9070
+    networks:
+         - my-net
+    depends_on: 
+         - boardservice1
+         - boardservice2
+         - boardservice3
+         - userservice1
+         - userservice2
+         - identityservice1
+         - identityservice2
+
+  # Consul Service #
+  consul:
+     image: consul #指定镜像名称为consul，本地如果没有consul镜像，会从docker远程仓库拉取
+     ports: 
+           - '8500:8500'
+     networks: 
+           - my-net
+networks: #定义容器网络
+  my-net: #my-net网络
+    driver: bridge #网络模式为bridge
